@@ -1,0 +1,26 @@
+# AI 평가 서버 설정. 비밀값(ANTHROPIC_API_KEY, IP_SALT)은 여기 적지 말고
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put IP_SALT
+# 로 넣는다. README의 "배포" 참고.
+name = "college-app-eval"
+main = "worker/index.mjs"
+compatibility_date = "2026-10-01"
+
+[vars]
+# 사이트 주소(경로 없이). 여러 개면 쉼표로.
+ALLOWED_ORIGINS = "http://localhost:3000,https://YOUR_GITHUB_ID.github.io"
+DAILY_LIMIT_PER_IP = "5"
+DAILY_LIMIT_TOTAL = "300"
+
+[[kv_namespaces]]
+binding = "USAGE"
+id = "PUT_KV_ID_HERE" # npx wrangler kv namespace create USAGE 로 받은 id
+
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+# 요청 내용이 로그로 남지 않게 끈다.
+[observability]
+enabled = false
